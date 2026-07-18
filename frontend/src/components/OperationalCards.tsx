@@ -1,4 +1,6 @@
-export function OperationalCards() {
+import React from 'react';
+
+export const OperationalCards = React.memo(function OperationalCards() {
   return (
     <section className="col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4" aria-label="Operational Key Performance Indicators">
       {/* Transportation */}
@@ -51,4 +53,4 @@ export function OperationalCards() {
       </article>
     </section>
   )
-}
+});

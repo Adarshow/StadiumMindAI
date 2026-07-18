@@ -1,4 +1,6 @@
-export function AIReasoningTimeline() {
+import React from 'react';
+
+export const AIReasoningTimeline = React.memo(function AIReasoningTimeline() {
   return (
     <aside className="panel col-span-1 row-span-2" aria-labelledby="timeline-title">
       <header className="panel-header flex justify-between items-center">
@@ -33,4 +35,4 @@ export function AIReasoningTimeline() {
       </div>
     </aside>
   )
-}
+});

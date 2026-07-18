@@ -19,7 +19,17 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         return response
 
-limiter = Limiter(key_func=get_remote_address)
+def get_real_ip(request: Request) -> str:
+    """
+    Extracts the real client IP behind Vercel's reverse proxy.
+    Falls back to the standard remote address if not found.
+    """
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    return get_remote_address(request)
+
+limiter = Limiter(key_func=get_real_ip)
 
 def create_app() -> FastAPI:
     app = FastAPI(

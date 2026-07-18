@@ -1,4 +1,6 @@
-export function DecisionPanel({ plan, onGeneratePlan, loading }: { plan: any, onGeneratePlan: () => void, loading: boolean }) {
+import React from 'react';
+
+export const DecisionPanel = React.memo(function DecisionPanel({ plan, onGeneratePlan, loading }: { plan: any, onGeneratePlan: () => void, loading: boolean }) {
   const confidencePercent = plan ? Math.round(plan.overall_confidence * 100) : 0;
   const topAction = plan?.prioritized_actions?.[0]?.action;
 
@@ -52,4 +54,4 @@ export function DecisionPanel({ plan, onGeneratePlan, loading }: { plan: any, on
       </div>
     </section>
   )
-}
+});

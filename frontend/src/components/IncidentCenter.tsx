@@ -1,4 +1,6 @@
-export function IncidentCenter() {
+import React from 'react';
+
+export const IncidentCenter = React.memo(function IncidentCenter() {
   return (
     <section className="panel col-span-1" aria-labelledby="incident-center-title">
       <header id="incident-center-title" className="panel-header">Active Incidents</header>
@@ -33,4 +35,4 @@ export function IncidentCenter() {
       </div>
     </section>
   )
-}
+});
