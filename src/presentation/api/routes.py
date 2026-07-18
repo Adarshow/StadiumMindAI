@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from src.domain.models import StadiumContext, MasterActionPlan
 from src.application.orchestration import MasterOrchestrator
 from src.application.agents.specialized_agents import (
@@ -6,8 +8,10 @@ from src.application.agents.specialized_agents import (
     SustainabilityAgent, EmergencyResponseAgent, FanExperienceAgent
 )
 from src.domain.interfaces import ILLMProvider, IPromptTemplateProvider
+from src.config.settings import settings
 
 router = APIRouter(prefix="/api/v1", tags=["Operational Intelligence"])
+limiter = Limiter(key_func=get_remote_address)
 
 # Mock Dependency Injection for the sake of the structural blueprint
 def get_mock_orchestrator() -> MasterOrchestrator:
@@ -28,7 +32,9 @@ def get_mock_orchestrator() -> MasterOrchestrator:
     return MasterOrchestrator(agents, llm, prompt)
 
 @router.post("/process-event", response_model=MasterActionPlan)
+@limiter.limit(settings.rate_limit)
 async def process_stadium_event(
+    request: Request,
     context: StadiumContext,
     orchestrator: MasterOrchestrator = Depends(get_mock_orchestrator)
 ):
