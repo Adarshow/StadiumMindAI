@@ -4,7 +4,7 @@ export const DigitalTwin = React.memo(function DigitalTwin() {
   return (
     <div className="panel col-span-1 lg:col-span-2 row-span-2 relative min-h-[400px]">
       <div className="panel-header flex justify-between items-center">
-        <span>Stadium Digital Twin</span>
+        <span id="digital-twin-title">Stadium Digital Twin</span>
         <div className="flex gap-2 text-xs">
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-stadium-danger"></div> High Density</span>
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-stadium-success"></div> Normal</span>

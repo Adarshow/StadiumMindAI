@@ -1,6 +1,18 @@
 import React from 'react';
 
-export const DecisionPanel = React.memo(function DecisionPanel({ plan, onGeneratePlan, loading }: { plan: any, onGeneratePlan: () => void, loading: boolean }) {
+export interface MasterActionPlan {
+  overall_confidence: number;
+  synthesis_reasoning: string;
+  prioritized_actions: Array<{
+    action: {
+      description: string;
+      priority: string;
+      target_zone: string;
+    }
+  }>;
+}
+
+export const DecisionPanel = React.memo(function DecisionPanel({ plan, onGeneratePlan, loading }: { plan: MasterActionPlan | null, onGeneratePlan: () => void, loading: boolean }) {
   const confidencePercent = plan ? Math.round(plan.overall_confidence * 100) : 0;
   const topAction = plan?.prioritized_actions?.[0]?.action;
 

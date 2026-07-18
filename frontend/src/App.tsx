@@ -18,7 +18,7 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           timestamp: new Date().toISOString(),
-          active_events: ['North Gate Bottleneck', 'Transport Delay'],
+          active_events: ['North Gate Bottleneck', 'Transport Delay', 'Sensory Room B Overflow', 'HVAC Sector 4 Inefficiency'],
           weather: 'Clear',
           attendance: 65000,
           metrics: { density: 0.95, transport_status: 'delayed' },

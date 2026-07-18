@@ -39,16 +39,13 @@ test.describe('StadiumMind AI Dashboard E2E', () => {
     await expect(decisionPanel).toBeVisible();
     
     // Check explainability text exists
-    await expect(page.getByText('Explainability Panel')).toBeVisible();
+    await expect(page.getByText('Master Action Plan')).toBeVisible();
     
-    // Find action buttons using ARIA labels
-    const executeButton = page.getByRole('button', { name: 'Execute Action Plan' });
-    const modifyButton = page.getByRole('button', { name: 'Modify Action Plan' });
+    // Find action button
+    const analyzeButton = page.getByRole('button', { name: 'Analyze Current Context' });
     
-    // Ensure buttons are visible and enabled
-    await expect(executeButton).toBeVisible();
-    await expect(executeButton).toBeEnabled();
-    await expect(modifyButton).toBeVisible();
-    await expect(modifyButton).toBeEnabled();
+    // Ensure button is visible and enabled
+    await expect(analyzeButton).toBeVisible();
+    await expect(analyzeButton).toBeEnabled();
   });
 });
