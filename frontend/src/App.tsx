@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { DigitalTwin } from './components/DigitalTwin'
 import { OperationalCards } from './components/OperationalCards'
 import { AIReasoningTimeline } from './components/AIReasoningTimeline'
@@ -7,6 +7,36 @@ import { IncidentCenter } from './components/IncidentCenter'
 
 function App() {
   const [operatorLanguage, setOperatorLanguage] = useState('English')
+  const [loading, setLoading] = useState(false)
+  const [masterPlan, setMasterPlan] = useState<any>(null)
+
+  const handleGeneratePlan = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/v1/process-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          active_events: ['North Gate Bottleneck', 'Transport Delay'],
+          weather: 'Clear',
+          attendance: 65000,
+          metrics: { density: 0.95, transport_status: 'delayed' },
+          operator_language: operatorLanguage
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setMasterPlan(data);
+      } else {
+        alert("API Error: " + (data.detail || "Rate limited or Server Error"));
+      }
+    } catch (err) {
+      alert("Failed to connect to the backend.");
+    } finally {
+      setLoading(false);
+    }
+  }, [operatorLanguage]);
 
   return (
     <div className="min-h-screen p-6 flex flex-col gap-6">
@@ -60,7 +90,7 @@ function App() {
         <OperationalCards />
 
         {/* Bottom Row: AI Decision Engine */}
-        <DecisionPanel />
+        <DecisionPanel plan={masterPlan} loading={loading} onGeneratePlan={handleGeneratePlan} />
         
         <div className="panel col-span-1 lg:col-span-2 flex items-center justify-center p-6 text-center text-stadium-muted">
           <p className="text-sm max-w-sm">

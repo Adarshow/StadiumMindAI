@@ -13,21 +13,19 @@ from src.config.settings import settings
 router = APIRouter(prefix="/api/v1", tags=["Operational Intelligence"])
 limiter = Limiter(key_func=get_remote_address)
 
-# Mock Dependency Injection for the sake of the structural blueprint
-def get_mock_orchestrator() -> MasterOrchestrator:
-    # In a real app, these would be proper concrete classes injected via a DI container
-    class DummyLLM(ILLMProvider):
-        async def generate_structured_response(self, prompt, schema):
-            return schema(synthesis_reasoning="Mocked fallback", prioritized_actions=[], overall_confidence=0.5)
+from src.infrastructure.llm_provider import GoogleGeminiProvider
+from src.infrastructure.prompt_provider import FilePromptTemplateProvider
 
-    class DummyPrompt(IPromptTemplateProvider):
-        def get_template(self, name): return "Mock Template"
-
-    llm = DummyLLM()
-    prompt = DummyPrompt()
+# Dependency Injection
+def get_orchestrator() -> MasterOrchestrator:
+    llm = GoogleGeminiProvider()
+    prompt = FilePromptTemplateProvider()
+    
+    # In a fully scaled app, you'd instantiate all agents. We'll use a subset to conserve Vercel serverless execution limits.
     agents = [
         CrowdIntelligenceAgent(llm, prompt),
-        TransportationAgent(llm, prompt)
+        TransportationAgent(llm, prompt),
+        EmergencyResponseAgent(llm, prompt)
     ]
     return MasterOrchestrator(agents, llm, prompt)
 
@@ -36,7 +34,7 @@ def get_mock_orchestrator() -> MasterOrchestrator:
 async def process_stadium_event(
     request: Request,
     context: StadiumContext,
-    orchestrator: MasterOrchestrator = Depends(get_mock_orchestrator)
+    orchestrator: MasterOrchestrator = Depends(get_orchestrator)
 ):
     """
     Ingests a live stadium context event and triggers the multi-agent reasoning pipeline
