@@ -14,15 +14,11 @@ graph TD
     A[Event Stream / IoT Sensors] --> B(Master Orchestrator Agent)
     B --> C[Crowd Intelligence Agent]
     B --> D[Transportation Agent]
-    B --> E[Accessibility Agent]
-    B --> F[Sustainability Agent]
-    B --> G[Emergency Response Agent]
+    B --> E[Emergency Response Agent]
     
     C --> H{Synthesis Engine}
     D --> H
     E --> H
-    F --> H
-    G --> H
     
     H --> I[Master Action Plan]
     I --> J[React + Tailwind UI Command Center]
@@ -31,60 +27,42 @@ graph TD
 ## AI Agent Workflow
 1. **Context Ingestion**: Real-time metrics (attendance, weather, shuttle schedules) are passed to the Master Orchestrator.
 2. **Concurrent Delegation**: The orchestrator triggers specialized agents using `asyncio.gather`.
-3. **Domain-Specific Reasoning**: Each agent assesses risks, correlates data, and generates structured observations with confidence scores.
-4. **Synthesis**: The Orchestrator resolves conflicts (e.g., Crowd agent wants to open Gate A, but Transport agent notes Gate A road is blocked) and finalizes the plan.
+3. **Domain-Specific Reasoning**: Each agent assesses risks, correlates data, and generates structured observations using **Google Gemini 2.5**.
+4. **Synthesis**: The Orchestrator resolves conflicts and generates a fully translated plan in the operator's native language.
 5. **Execution UI**: The plan is presented to the human operator with an explainability panel.
 
 ## Folder Structure
 ```text
 stadium_mind_ai/
-├── frontend/                   # React + TypeScript + Tailwind SPA
-│   ├── src/components/         # Dashboard UI (Digital Twin, Incident Center, etc.)
+├── frontend/                   # React + TypeScript + Vite SPA
+│   ├── src/components/         # Dashboard UI
 │   └── tailwind.config.js
 ├── src/
 │   ├── domain/                 # Core Pydantic Models and Interfaces
 │   ├── application/            # Orchestrator and Base Agent logic
-│   ├── infrastructure/         # Prompt templates and LLM bindings
-│   │   └── prompts/            # Decoupled agent system prompts
-│   └── presentation/           # FastAPI application (pending completion)
-├── tests/
+│   ├── infrastructure/         # Google Gemini integration and Prompts
+│   └── presentation/           # FastAPI application
+├── vercel.json                 # Serverless routing configuration
 └── README.md
 ```
 
-## Installation
-### Prerequisites
-- Node.js (v18+)
-- Python (3.10+)
+## Deployment and Setup
+The project is architected for **Vercel Serverless Deployment** utilizing a FastAPI backend and a Vite React frontend.
 
+**Environment Variables Required in Vercel:**
+- `LLM_API_KEY`: A valid Google Gemini API Key.
+
+**Local Development (React Frontend):**
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/stadium-mind-ai.git
-cd stadium-mind-ai
-
-# Frontend Setup
 cd frontend
 npm install
-
-# Backend Setup (Python)
-cd ../
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-## Running Locally
-**Start the Frontend Development Server:**
-```bash
-cd frontend
 npm run dev
 ```
-Navigate to `http://localhost:5173` to view the command center. (Note: Ensure the backend is running to receive live simulated data).
 
-## Prompt Engineering Approach
-We decoupled prompts from the application code by storing them in `src/infrastructure/prompts/`. 
-- **Role-Based Persona**: Each agent is given a strict operational persona (e.g., "You are the Transportation Agent").
-- **Structured Context Injection**: Data is injected dynamically via standard string replacements.
-- **Strict Output Schema**: The LLM is instructed (and enforced via Pydantic models) to return observations, risks, and recommended actions with explicit confidence scores (0.0 - 1.0).
+## Prompt Engineering & Generative AI Approach
+We utilize the official `google-genai` SDK targeting the `gemini-2.5-flash` model.
+- **Strict Structured Outputs**: To guarantee integration with our Clean Architecture, the schema is injected dynamically into the prompt alongside the `response_mime_type="application/json"` configuration to force strict adherence to the Pydantic models.
+- **Multilingual Support**: The operator's language is passed from the UI and dynamically injected into the synthesis prompt, ensuring global scalability.
 
 ## Security Considerations
 - **API Key Management**: LLM API keys are managed securely via `pydantic-settings` and `.env` files.
