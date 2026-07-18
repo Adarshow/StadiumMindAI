@@ -7,6 +7,7 @@ class StadiumContext(BaseModel):
     weather: str = Field(..., description="Current weather conditions")
     attendance: int = Field(..., description="Current stadium attendance")
     metrics: Dict[str, Any] = Field(default_factory=dict, description="Key metrics like density, transport status, etc.")
+    operator_language: str = Field(default="English", description="The native language of the stadium operator requesting the plan")
 
 class AgentObservation(BaseModel):
     description: str = Field(..., description="Observation made by the agent based on context")

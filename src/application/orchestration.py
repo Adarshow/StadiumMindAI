@@ -32,5 +32,8 @@ class MasterOrchestrator:
         
         prompt = template.replace("{{context}}", context_json).replace("{{agent_outputs}}", outputs_json)
         
+        # Enforce multilingual assistance
+        prompt += f"\n\nCRITICAL MULTILINGUAL INSTRUCTION: You MUST write your synthesis_reasoning and all action descriptions strictly in {context.operator_language}. Do not output English unless {context.operator_language} is English."
+        
         master_plan: MasterActionPlan = await self.llm_provider.generate_structured_response(prompt, MasterActionPlan)
         return master_plan
