@@ -16,18 +16,19 @@ limiter = Limiter(key_func=get_remote_address)
 from src.infrastructure.llm_provider import GoogleGeminiProvider
 from src.infrastructure.prompt_provider import FilePromptTemplateProvider
 
+# Global Singletons to drastically improve Vercel execution efficiency
+_llm_provider = GoogleGeminiProvider()
+_prompt_provider = FilePromptTemplateProvider()
+_agents = [
+    CrowdIntelligenceAgent(_llm_provider, _prompt_provider),
+    TransportationAgent(_llm_provider, _prompt_provider),
+    EmergencyResponseAgent(_llm_provider, _prompt_provider)
+]
+_master_orchestrator = MasterOrchestrator(_agents, _llm_provider, _prompt_provider)
+
 # Dependency Injection
 def get_orchestrator() -> MasterOrchestrator:
-    llm = GoogleGeminiProvider()
-    prompt = FilePromptTemplateProvider()
-    
-    # In a fully scaled app, you'd instantiate all agents. We'll use a subset to conserve Vercel serverless execution limits.
-    agents = [
-        CrowdIntelligenceAgent(llm, prompt),
-        TransportationAgent(llm, prompt),
-        EmergencyResponseAgent(llm, prompt)
-    ]
-    return MasterOrchestrator(agents, llm, prompt)
+    return _master_orchestrator
 
 @router.post("/process-event", response_model=MasterActionPlan)
 @limiter.limit(settings.rate_limit)

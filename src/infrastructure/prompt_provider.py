@@ -8,12 +8,18 @@ class FilePromptTemplateProvider(IPromptTemplateProvider):
             self.base_dir = os.path.join(os.path.dirname(__file__), "prompts")
         else:
             self.base_dir = base_dir
+        self._cache = {}
 
     def get_template(self, template_name: str) -> str:
+        if template_name in self._cache:
+            return self._cache[template_name]
+            
         filepath = os.path.join(self.base_dir, template_name)
         try:
             with open(filepath, "r", encoding="utf-8") as f:
-                return f.read()
+                content = f.read()
+                self._cache[template_name] = content
+                return content
         except FileNotFoundError:
             # Fallback to a generic template if file is missing (to support the competition mock setup)
             if template_name == "master_decision.txt":

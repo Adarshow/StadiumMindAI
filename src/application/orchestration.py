@@ -16,11 +16,12 @@ class MasterOrchestrator:
         results = await asyncio.gather(*agent_tasks, return_exceptions=True)
         
         # Filter successful outputs and log/handle failures
+        import logging
+        logger = logging.getLogger(__name__)
         agent_outputs: List[AgentOutput] = []
         for result, agent in zip(results, self.agents):
             if isinstance(result, Exception):
-                # In production, use structlog to log the exception here
-                print(f"Warning: {agent.name} failed with error: {str(result)}")
+                logger.warning(f"Agent execution failure: {agent.name} failed with error: {str(result)}")
             else:
                 agent_outputs.append(result)
         

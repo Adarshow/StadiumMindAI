@@ -2,12 +2,12 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
 class StadiumContext(BaseModel):
-    timestamp: str = Field(..., description="Current timestamp of the context")
-    active_events: List[str] = Field(default_factory=list, description="List of active events or incidents")
-    weather: str = Field(..., description="Current weather conditions")
-    attendance: int = Field(..., description="Current stadium attendance")
+    timestamp: str = Field(..., max_length=50, description="Current timestamp of the context")
+    active_events: List[str] = Field(default_factory=list, max_length=20, description="List of active events or incidents")
+    weather: str = Field(..., max_length=100, description="Current weather conditions")
+    attendance: int = Field(..., ge=0, le=200000, description="Current stadium attendance")
     metrics: Dict[str, Any] = Field(default_factory=dict, description="Key metrics like density, transport status, etc.")
-    operator_language: str = Field(default="English", description="The native language of the stadium operator requesting the plan")
+    operator_language: str = Field(default="English", max_length=50, description="The native language of the stadium operator requesting the plan")
 
 class AgentObservation(BaseModel):
     description: str = Field(..., description="Observation made by the agent based on context")

@@ -36,5 +36,7 @@ class GoogleGeminiProvider(ILLMProvider):
             return schema.model_validate_json(text)
         except Exception as e:
             # Re-raise the exception so the MasterOrchestrator can catch it
-            print(f"Gemini API Error: {e}")
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Gemini API Error: {e}")
             raise e
