@@ -32,6 +32,7 @@ function App() {
         alert("API Error: " + (data.detail || "Rate limited or Server Error"));
       }
     } catch (err) {
+      console.error("Backend connection failed:", err);
       alert("Failed to connect to the backend.");
     } finally {
       setLoading(false);

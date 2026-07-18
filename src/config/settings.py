@@ -1,11 +1,12 @@
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 class Settings(BaseSettings):
     app_name: str = "StadiumMind AI"
     environment: str = "development"
     debug: bool = True
-    llm_api_key: str = "mock_key_for_now"
+    llm_api_key: str = Field(default="", description="API key for the LLM provider")
     
     # Security Policies
     allowed_origins: List[str] = ["http://localhost:5173", "https://stadiummind-ai.vercel.app"]
