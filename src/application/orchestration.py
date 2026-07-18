@@ -5,12 +5,21 @@ from src.domain.interfaces import ILLMProvider, IPromptTemplateProvider
 from src.application.agents.base_agent import BaseAgent
 
 class MasterOrchestrator:
+    """
+    The central operational intelligence node.
+    
+    This class orchestrates a suite of specialized multi-agent systems concurrently,
+    synthesizing their independent analyses into a cohesive, prioritized Master Action Plan.
+    """
     def __init__(self, agents: List[BaseAgent], llm_provider: ILLMProvider, prompt_provider: IPromptTemplateProvider):
         self.agents = agents
         self.llm_provider = llm_provider
         self.prompt_provider = prompt_provider
         
     async def process_context(self, context: StadiumContext) -> MasterActionPlan:
+        """
+        Executes the concurrent multi-agent reasoning pipeline against a real-time StadiumContext.
+        """
         # Run all specialized agents concurrently, capturing exceptions
         agent_tasks = [agent.analyze(context) for agent in self.agents]
         results = await asyncio.gather(*agent_tasks, return_exceptions=True)

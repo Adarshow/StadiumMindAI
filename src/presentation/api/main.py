@@ -6,6 +6,18 @@ from slowapi.errors import RateLimitExceeded
 from src.presentation.api.routes import router
 from src.presentation.exceptions import DomainException, domain_exception_handler, global_exception_handler
 from src.config.settings import settings
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response: Response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -28,6 +40,9 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    
+    # Security Headers
+    app.add_middleware(SecurityHeadersMiddleware)
 
     # Register Exception Handlers
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)

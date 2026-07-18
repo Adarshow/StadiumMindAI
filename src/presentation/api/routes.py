@@ -22,12 +22,18 @@ _prompt_provider = FilePromptTemplateProvider()
 _agents = [
     CrowdIntelligenceAgent(_llm_provider, _prompt_provider),
     TransportationAgent(_llm_provider, _prompt_provider),
-    EmergencyResponseAgent(_llm_provider, _prompt_provider)
+    EmergencyResponseAgent(_llm_provider, _prompt_provider),
+    AccessibilityAgent(_llm_provider, _prompt_provider),
+    SustainabilityAgent(_llm_provider, _prompt_provider),
+    FanExperienceAgent(_llm_provider, _prompt_provider)
 ]
 _master_orchestrator = MasterOrchestrator(_agents, _llm_provider, _prompt_provider)
 
-# Dependency Injection
 def get_orchestrator() -> MasterOrchestrator:
+    """
+    Dependency injection for the MasterOrchestrator singleton.
+    This ensures all backend connections (LLMs, Prompts) are reused efficiently.
+    """
     return _master_orchestrator
 
 @router.post("/process-event", response_model=MasterActionPlan)
