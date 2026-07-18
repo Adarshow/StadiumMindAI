@@ -52,6 +52,9 @@ export const DecisionPanel = React.memo(function DecisionPanel({ plan, onGenerat
               <button onClick={onGeneratePlan} type="button" aria-label="Execute Action Plan" className="flex-1 bg-stadium-accent hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-stadium-accent focus:outline-none">
                 Execute New Plan
               </button>
+              <button type="button" aria-label="Modify Action Plan" className="flex-1 bg-transparent border border-gray-600 hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-gray-600 focus:outline-none">
+                Modify Action Plan
+              </button>
             </div>
           </>
         ) : (
