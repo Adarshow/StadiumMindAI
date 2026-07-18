@@ -2,6 +2,7 @@ import React from 'react';
 
 export const DigitalTwin = React.memo(function DigitalTwin() {
   return (
+    <div className="panel col-span-1 lg:col-span-2 row-span-2 relative min-h-[400px]">
       <div className="panel-header flex justify-between items-center">
         <span>Stadium Digital Twin</span>
         <div className="flex gap-2 text-xs">
